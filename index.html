@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alien Disco Planet</title>
+  <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <a-scene>
+    <a-sky color="#001a33"></a-sky>
+
+    <a-plane position="0 -1 0" rotation="-90 0 0" width="50" height="50" color="#2b2b2b"></a-plane>
+
+    <a-sphere 
+      position="0 5 0" 
+      radius="4" 
+      color="#ff33cc" 
+      opacity="0.8" 
+      animation="property: rotation; to: 0 360 0; loop: true; dur: 4000;">
+      <a-light type="point" color="#ff33cc" intensity="2" distance="10"></a-light>
+    </a-sphere>
+
+    <a-light type="spot" position="2 4 -4" color="#33ccff" intensity="1" target="#center"></a-light>
+    <a-light type="spot" position="-2 4 4" color="#ccff33" intensity="1" target="#center"></a-light>
+
+    <a-entity geometry="primitive: sphere; radius: 1.2" 
+              position="0 3 0" 
+              material="color: #ffffff; metalness: 0.8; roughness: 0.2" 
+              animation="property: rotation; to: 0 360 360; loop: true; dur: 3000;">
+      <a-light type="point" color="#ffffff" intensity="1" distance="5"></a-light>
+    </a-entity>
+
+    <a-box position="-2 0 -5" depth="0.5" height="1" width="0.5" color="#00ff00"></a-box>
+    <a-box position="2 0 -5" depth="0.5" height="1" width="0.5" color="#ff0000"></a-box>
+
+    <a-camera position="0 1.6 5">
+      <a-entity cursor="fuse: true; fuseTimeout: 1000" 
+                geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03" 
+                material="color: white; shader: flat" 
+                position="0 0 -1">
+      </a-entity>
+    </a-camera>
+  </a-scene>
+</body>
+</html>
