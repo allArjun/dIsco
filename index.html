@@ -3,50 +3,217 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alien Disco Planet</title>
+  <title> Alien Disco Planet</title>
   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script>
+    // Psychedelic Color Wave Component
+    AFRAME.registerComponent('color-wave', {
+      init: function() {
+        this.colorChange = () => {
+          const hue = (Date.now() % 3600) / 10;
+          this.el.setAttribute('material', 'color', `hsl(${hue}, 100%, 50%)`);
+        };
+      },
+      tick: function() {
+        this.colorChange();
+      }
+    });
+
+    // Advanced Floating Motion
+    AFRAME.registerComponent('float-motion', {
+      schema: {
+        amplitude: {default: 0.1},
+        speed: {default: 1}
+      },
+      init: function() {
+        this.initialPosition = this.el.object3D.position.y;
+        this.time = 0;
+      },
+      tick: function(t) {
+        this.time += 0.001 * this.data.speed;
+        const newY = this.initialPosition + Math.sin(this.time) * this.data.amplitude;
+        this.el.object3D.position.y = newY;
+      }
+    });
+
+    // Interactive Beat Component
+    AFRAME.registerComponent('beat-reactive', {
+      init: function() {
+        this.scale = 1;
+        this.el.addEventListener('click', () => {
+          anime({
+            targets: this.el.object3D.scale,
+            x: [1, 1.2, 1],
+            y: [1, 1.2, 1],
+            z: [1, 1.2, 1],
+            duration: 300,
+            easing: 'easeOutElastic'
+          });
+        });
+      },
+      tick: function(t) {
+        const beat = Math.sin(t * 0.002) * 0.1 + 1;
+        this.el.object3D.scale.set(beat, beat, beat);
+      }
+    });
+
+    // Orbital Motion Component
+    AFRAME.registerComponent('orbital-motion', {
+      schema: {
+        radius: {default: 3},
+        speed: {default: 1},
+        height: {default: 0}
+      },
+      tick: function(time) {
+        const angle = time * 0.001 * this.data.speed;
+        const x = Math.cos(angle) * this.data.radius;
+        const z = Math.sin(angle) * this.data.radius;
+        this.el.object3D.position.set(x, this.data.height, z);
+      }
+    });
+  </script>
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
+    .title {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      font-size: 24px;
+      text-shadow: 0 0 10px #ff00ff;
+      z-index: 1000;
+      pointer-events: none;
+      animation: glow 2s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #ff00ff; }
+      to { text-shadow: 0 0 20px #ff00ff, 0 0 30px #ff00ff; }
     }
   </style>
 </head>
 <body>
+  <div class="title">ALIEN DISCO PLANET</div>
   <a-scene>
-    <a-sky color="#001a33"></a-sky>
-
-    <a-plane position="0 -1 0" rotation="-90 0 0" width="50" height="50" color="#2b2b2b"></a-plane>
-
-    <a-sphere 
-      position="0 5 0" 
-      radius="4" 
-      color="#ff33cc" 
-      opacity="0.8" 
-      animation="property: rotation; to: 0 360 0; loop: true; dur: 4000;">
-      <a-light type="point" color="#ff33cc" intensity="2" distance="10"></a-light>
-    </a-sphere>
-
-    <a-light type="spot" position="2 4 -4" color="#33ccff" intensity="1" target="#center"></a-light>
-    <a-light type="spot" position="-2 4 4" color="#ccff33" intensity="1" target="#center"></a-light>
-
-    <a-entity geometry="primitive: sphere; radius: 1.2" 
-              position="0 3 0" 
-              material="color: #ffffff; metalness: 0.8; roughness: 0.2" 
-              animation="property: rotation; to: 0 360 360; loop: true; dur: 3000;">
-      <a-light type="point" color="#ffffff" intensity="1" distance="5"></a-light>
+    <!-- Environment -->
+    <a-sky color="#000" animation="property: material.color; from: #000; to: #001; dur: 2000; dir: alternate; loop: true"></a-sky>
+    
+    <!-- Main Dance Floor -->
+    <a-entity position="0 -1 0">
+      <a-cylinder 
+        radius="15" 
+        height="0.1" 
+        segments-radial="20"
+        material="color: #333; metalness: 0.8; roughness: 0.2"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 30000">
+        <!-- Dance Floor Patterns -->
+        <a-entity position="0 0.1 0">
+          <a-ring 
+            position="0 0.01 0" 
+            radius-inner="2" 
+            radius-outer="14" 
+            segments-theta="72"
+            material="color: #ff00ff; opacity: 0.5; side: double"
+            animation="property: rotation; to: 0 -360 0; loop: true; dur: 15000"></a-ring>
+          <a-ring 
+            position="0 0.02 0" 
+            radius-inner="1" 
+            radius-outer="13" 
+            segments-theta="36"
+            material="color: #00ffff; opacity: 0.3; side: double"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 12000"></a-ring>
+        </a-entity>
+      </a-cylinder>
     </a-entity>
 
-    <a-box position="-2 0 -5" depth="0.5" height="1" width="0.5" color="#00ff00"></a-box>
-    <a-box position="2 0 -5" depth="0.5" height="1" width="0.5" color="#ff0000"></a-box>
+    <!-- Central Disco Core -->
+    <a-entity position="0 5 0">
+      <a-sphere 
+        radius="2"
+        material="color: #ff00ff; metalness: 0.9; roughness: 0.1; opacity: 0.9"
+        color-wave
+        beat-reactive>
+        <a-light type="point" color="#ff00ff" intensity="2" distance="20">
+          <a-animation attribute="intensity" from="1" to="3" dir="alternate" dur="1000" repeat="indefinite"></a-animation>
+        </a-light>
+      </a-sphere>
+    </a-entity>
 
-    <a-camera position="0 1.6 5">
-      <a-entity cursor="fuse: true; fuseTimeout: 1000" 
-                geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03" 
-                material="color: white; shader: flat" 
-                position="0 0 -1">
+    <!-- Orbiting Light Spheres -->
+    <a-entity id="orbital-system" position="0 5 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 20000">
+      <a-sphere position="5 0 0" radius="0.5" material="color: #00ffff; emissive: #00ffff; emissiveIntensity: 0.5" orbital-motion="radius: 5; speed: 0.5; height: 0">
+        <a-light type="point" color="#00ffff" intensity="1" distance="10"></a-light>
+      </a-sphere>
+      <a-sphere position="-5 0 0" radius="0.5" material="color: #ff00ff; emissive: #ff00ff; emissiveIntensity: 0.5" orbital-motion="radius: 5; speed: 0.5; height: 0">
+        <a-light type="point" color="#ff00ff" intensity="1" distance="10"></a-light>
+      </a-sphere>
+    </a-entity>
+
+    <!-- Alien Dancers -->
+    <a-entity id="dancers-container">
+      <!-- Dancer 1 -->
+      <a-entity position="-3 0 -3" float-motion="amplitude: 0.2; speed: 1.5">
+        <a-cone position="0 1.5 0" radius-bottom="0.5" radius-top="0.2" height="1" color="#00ff00" material="emissive: #00ff00; emissiveIntensity: 0.3">
+          <a-sphere position="0 0.8 0" radius="0.3" color="#00ff00" material="emissive: #00ff00">
+            <a-sphere position="-0.15 0.1 0.2" radius="0.1" color="#fff" material="emissive: #fff"></a-sphere>
+            <a-sphere position="0.15 0.1 0.2" radius="0.1" color="#fff" material="emissive: #fff"></a-sphere>
+          </a-sphere>
+        </a-cone>
       </a-entity>
-    </a-camera>
+
+      <!-- Dancer 2 -->
+      <a-entity position="3 0 -3" float-motion="amplitude: 0.2; speed: 2">
+        <a-cone position="0 1.5 0" radius-bottom="0.5" radius-top="0.2" height="1" color="#ff00ff" material="emissive: #ff00ff; emissiveIntensity: 0.3">
+          <a-sphere position="0 0.8 0" radius="0.3" color="#ff00ff" material="emissive: #ff00ff">
+            <a-sphere position="-0.15 0.1 0.2" radius="0.1" color="#fff" material="emissive: #fff"></a-sphere>
+            <a-sphere position="0.15 0.1 0.2" radius="0.1" color="#fff" material="emissive: #fff"></a-sphere>
+          </a-sphere>
+        </a-cone>
+      </a-entity>
+    </a-entity>
+
+    <!-- Floating Crystal Decorations -->
+    <a-entity id="crystal-container">
+      <a-entity position="-4 4 -4" float-motion="amplitude: 0.3; speed: 0.8">
+        <a-octahedron radius="0.5" color="#00ffff" material="metalness: 0.9; roughness: 0.1; emissive: #00ffff"
+          animation="property: rotation; to: 360 360 360; loop: true; dur: 5000">
+          <a-light type="point" color="#00ffff" intensity="0.5" distance="5"></a-light>
+        </a-octahedron>
+      </a-entity>
+      <a-entity position="4 4 -4" float-motion="amplitude: 0.3; speed: 1">
+        <a-octahedron radius="0.5" color="#ff00ff" material="metalness: 0.9; roughness: 0.1; emissive: #ff00ff"
+          animation="property: rotation; to: -360 -360 -360; loop: true; dur: 5000">
+          <a-light type="point" color="#ff00ff" intensity="0.5" distance="5"></a-light>
+        </a-octahedron>
+      </a-entity>
+    </a-entity>
+
+    <!-- Laser Beams -->
+    <a-entity id="laser-container">
+      <a-cylinder position="-5 6 -5" radius="0.05" height="10" rotation="45 0 0" color="#ff00ff" material="emissive: #ff00ff; opacity: 0.7"
+        animation="property: rotation; from: 30 0 0; to: 60 360 0; loop: true; dur: 8000"></a-cylinder>
+      <a-cylinder position="5 6 -5" radius="0.05" height="10" rotation="-45 0 0" color="#00ffff" material="emissive: #00ffff; opacity: 0.7"
+        animation="property: rotation; from: -30 0 0; to: -60 -360 0; loop: true; dur: 8000"></a-cylinder>
+    </a-entity>
+
+    <!-- Particle Systems -->
+    <a-entity position="0 0 0" particle-system="preset: dust; particleCount: 5000; color: #ff00ff, #00ffff; size: 0.1, 0.3; accelerationValue: 0.1 0.1 0.1; velocityValue: 0.1 0.1 0.1"></a-entity>
+
+    <!-- Camera -->
+    <a-entity position="0 1.6 8">
+      <a-camera>
+        <a-cursor
+          animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
+          animation__fusing="property: scale; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
+          animation__mouseleave="property: scale; startEvents: mouseleave; to: 1 1 1; dur: 500"
+          material="color: white; shader: flat"
+          position="0 0 -3"
+          geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+          raycaster="objects: .clickable">
+        </a-cursor>
+      </a-camera>
+    </a-entity>
   </a-scene>
 </body>
 </html>
